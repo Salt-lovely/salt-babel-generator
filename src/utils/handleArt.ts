@@ -2,7 +2,7 @@
  * @Author: Salt
  * @Date: 2022-09-04 15:24:18
  * @LastEditors: Salt
- * @LastEditTime: 2022-09-04 16:14:38
+ * @LastEditTime: 2022-09-04 16:27:57
  * @Description: 这个文件的功能
  * @FilePath: \salt-babel-generator\src\utils\handleArt.ts
  */
@@ -16,11 +16,11 @@ interface Article<T extends { [key: string]: string }> {
 const getId = (str: string | number) => '<<' + uuidV4() + '-' + str + '>>'
 
 const getSlot = (str: string): null | [string, string, string] => {
-  const matched = str.match(/\{\{\s*([^}|]+?)((:?\s*\|\s*)([^}]+?))?\s*\}\}/)
+  const matched = str.match(/\{\{\s*([^}|]+?)((\s*\|\s*)([^}]+?))?\s*\}\}/)
   if (!matched) return null
   const matchedStr = matched[0]
   const key = matched[1]
-  const defaultValue = matched[3] || ''
+  const defaultValue = matched[4] || ''
   return [matchedStr, key, defaultValue]
 }
 
@@ -31,7 +31,7 @@ export function parseArt<T extends { [key: string]: string }>(
   let slot: null | [string, string, string] = null
   let res = str
   const map = {} as { [key in keyof T]: { id: string; defaultValue: string } }
-  while ((slot = getSlot(str)) && safe--) {
+  while ((slot = getSlot(res)) && safe--) {
     const [ms, key, d] = slot
     if (!(key in map)) {
       // 新的槽
